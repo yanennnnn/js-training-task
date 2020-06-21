@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="all.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+  <title>TodoList</title>
+</head>
+<body>
+  <div class="container">
+    <div class="todoList">
+      <h1>ToDoList</h1>
+      <div class="todoList_input"> 
+        <input type="checkbox" id="edit" name="edit">
+        <label for="edit" class="edit"><i class="fas fa-pen"></i></label>
+        <input type="text" class="text" placeholder="請輸入代辦事項" >
+        <button class="submit"><i class="fas fa-plus"></i></button>
+      </div>
+      <div class="todoList_section">
+        <ul id="todoList_list">
+        </ul>
+      </div>
+      <div class="todoList_list_allDel">
+        <p>You have not finished list:<span class="countTodo">0</span></p>
+        <button class="allDel"><li class="fas fa-trash"></li></button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="all.js"></script>
+</body>
+</html>

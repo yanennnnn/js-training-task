@@ -1,0 +1,205 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+    vertical-align: baseline;
+    font-family:cwTeXYen,monospace,serif;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+@font-face {
+    font-family: 'cwTeXYen';
+    font-style: normal;
+    font-weight: 500;
+    src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot);
+    src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot?#iefix) format('embedded-opentype'),
+         url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff2) format('woff2'),
+         url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff) format('woff'),
+         url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.ttf) format('truetype');
+  }
+
+.container{
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(#fcefbb 75%,#FCE58D 90%, #FCD963);
+    display: flex;
+    align-items: center;
+}
+.todoList{
+    flex-basis:500px;
+    height: 70%;
+    background-color: white;
+    margin:0 auto;
+    border-radius: 10px;
+    box-shadow: 2px 2px 15px -1px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1{
+    font-size: 45px;
+    margin:15px 0;
+    color:#6e5504;
+    font-weight: 500;
+}
+.todoList_input{
+    width: 90%;
+    height: 40px;
+    text-align: center;
+}
+.todoList_input .submit,.todoList_input .edit,.todoList_list_allDel .allDel{
+    background:#f7513c;
+    border-radius: 50%;
+    border:none;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+} 
+.todoList_input .submit{
+    display:none;
+}
+.todoList_input .edit{
+    background:#2b86fd;
+    display:block;
+    margin-left: auto;
+    margin-right: 30px;
+    position: relative;
+}
+.todoList_input .edit::before{
+    position: absolute;
+    content: 'write your list...';
+    right:90px;
+    width: 200px;
+
+}
+.todoList_input #edit{
+    display: none;
+}
+.todoList_input #edit:checked~ .submit{
+    display: inline-block;
+}
+.todoList_input #edit:checked~ .edit{
+    display: none;
+}
+
+.todoList_input input,.todoList_input button{
+    outline: none;
+}
+.todoList_input i{
+    color: white;
+    font-size: 18px;
+}
+.todoList_input .text{
+    border:none;
+    transition: 1s;
+    text-indent: 10px;
+    width: 0%;
+    padding: 0;
+    border-bottom:2px solid rgb(167, 166, 166);
+    font-size: 18px;
+}
+.todoList_input #edit:checked~ .text{
+    width: 60%;
+    padding-bottom: 2px;
+}
+
+.todoList_section{
+    margin-top:20px;
+    margin-bottom: 20px;
+    width: 80%;
+    overflow-y:auto;
+}
+.todoList_section .todoList_list_item{
+    display: flex;
+    padding: 10px 10px;
+    height: auto;
+    /* overflow: hidden; */
+    border: 1px solid rgba(167, 166, 166,.5);
+    box-shadow:5px 3px 5px -5px rgba(107, 106, 106, 0.5) ;
+    border-radius: 5px;
+}
+.todoList_section .todoList_list_item+.todoList_list_item{
+    margin-top: 15px;
+}
+.todoList_list_item input{
+    margin-right: 5px;
+}
+.todoList_list_item label{
+    display: flex;
+    color: #503e05;
+    padding-right: 5px;
+}
+.todoList_list_item .completed{
+    font-style: oblique;
+    text-decoration: line-through;
+    color:rgba(107, 106, 106, 0.5)
+}
+.todoList_list_item .del{
+    align-self: flex-start;
+    margin-left: auto;
+    padding:0;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    color:rgb(71, 70, 70)
+}
+.todoList_list_item .del:focus ,.todoList_list_allDel .allDel:focus{
+    outline: none;
+}
+.todoList_list_allDel{
+    width: 90%;
+    margin-top: auto;
+    display: flex;
+    margin-bottom: 10px;
+}
+.todoList_list_allDel p{
+    margin-right: auto;
+    align-self: center;
+    margin-left:30px;
+}
+.todoList_list_allDel .allDel{
+    margin-left: auto;
+    margin-right: 30px;
+    color: white;
+    font-size: 18px;
+}
