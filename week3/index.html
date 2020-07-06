@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		<title>Vue.js</title>
+		<style>
+      *{
+        font-family:'微軟正黑體',serif;
+      }
+			.optionList a{
+				color:grey;
+				width: 40px;
+				height: 40px;
+				text-align: center;
+				/* display: inline-block; */
+			}
+			.optionList >a.active{
+				background-color:#ffc107;
+				color:rgba(255, 255, 255, 0.884);
+			}
+			.comment img{
+				width: 40px;
+				height: 40px;
+			}
+		</style>
+</head>
+<body>
+	<div id="app" class="container">
+		<div class="text-right mt-5">
+			<button type="button" class="btn btn-primary" data-toggle="modal" @click="openModal('new')">建立新的產品</button>
+		</div>
+		<div class="mt-3">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col" width="120">分類</th>
+						<th scope="col">產品名稱</th>
+						<th scope="col" class="text-center" width="70">原價</th>
+						<th scope="col" class="text-center" width="70">售價</th>
+						<th scope="col" class="text-center" width="100">是否啟用</th>
+						<th scope="col" class="text-center" width="190">編輯</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="item in products" :key="item.id">
+						<th scope="row">{{item.category}}</th>
+						<td>{{item.title}}</td>
+						<td>${{item.origin_price}}</td>
+						<td class="text-danger">${{item.price}}</td>
+						<td>
+							<span v-if="item.is_enabled" class="text-success">啟用</span>
+							<span v-else>不啟用</span>
+						</td>
+						<td class="d-flex">
+							<button type="button" class="btn btn-sm btn-outline-primary mr-1"
+								data-toggle="modal" @click="openModal('edit',item)">編輯</button>
+							<button type="button" class="btn btn-sm btn-outline-danger mr-1" 
+								data-toggle="modal" @click="openModal('del',item)">刪除</button>
+							<button type="button" class="btn btn-sm btn-outline-success"
+								data-toggle="modal" @click="openModal('option',item)">評價</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+			<!-- update modal -->
+		<div class="modal fade " id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true" data-backdrop="false">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header bg-dark">
+						<h5 class="modal-title text-light" id="updateModalLabel">建立產品</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label for="imgUrl">圖片網址</label>
+									<input type="text" id="imgUrl" v-model="tempProduct.imageUrl" class="form-control" placeholder="請輸入圖片網址">
+								</div>
+								<img class="img-fluid" :src="tempProduct.imageUrl"  alt>
+							</div>
+							<div class="col-sm-8">
+								<div class="form-group">
+									<label for="title">標題</label>
+									<input type="text" id="title" v-model="tempProduct.title" class="form-control" placeholder="請輸入產品標題">
+								</div>
+								<div class="form-row">
+									<div class="col">
+										<label for="originPrice">原價</label>
+										<input type="number" id="originPrice" class="form-control"  v-model="tempProduct.origin_price" placeholder="請輸入原價">
+									</div>
+									<div class="col">
+										<label for="price">售價</label>
+										<input type="number" id="price" class="form-control" v-model="tempProduct.price" placeholder="請輸入售價">
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col">
+										<label for="category">分類</label>
+										<input type="text" id="category" class="form-control" v-model="tempProduct.category" placeholder="請輸入分類">
+									</div>
+									<div class="col">
+										<label for="unit">單位</label>
+										<input type="text" id="unit" class="form-control" v-model="tempProduct.unit" placeholder="請輸入單位">
+									</div>
+								</div>
+								<div class="form-group mt-3">
+									<label for="description">產品描述</label>
+									<textarea name="" class="form-control" id="description" v-model="tempProduct.description" placeholder="請輸入產品描述"></textarea>
+								</div>
+								<div class="form-group mt-3">
+									<label for="content">說明內容</label>
+									<textarea name="" class="form-control" id="content" v-model="tempProduct.content" placeholder="請輸入說明內容"></textarea>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" value="" id="is_enabled" v-model="tempProduct.is_enabled">
+									<label class="form-check-label" for="is_enabled">
+										是否啟用
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary" @click="updateProduct">確認</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- del modal -->
+		<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModal" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header bg-danger">
+						<h5 class="modal-title text-light" id="delModalLabel">{{tempProduct.title}}</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body py-4">
+						請問你要刪除此產品嗎?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-danger" @click="delProduct">確定刪除</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- option -->
+		<div class="modal fade" id="optionModal" tabindex="-1" role="dialog" aria-labelledby="optionModal" aria-hidden="true" data-backdrop="false">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header bg-success">
+						<h5 class="modal-title text-light" id="optionModalLabel">{{ tempProduct.title }}</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+            <div v-if="tempOptions.length">
+              <div class="optionTarget" id="myList">
+                <ul class="d-flex list-unstyled">
+                  <li v-for="(item,i) in tempOptions" class="mr-2 optionList">
+                    <a href="#" class="rounded-circle p-2 border border-grey text-decoration-none"
+                      @click="changeOptionTarget(item.stars)"
+                      :key="item.stars" :class="{'active':item.stars==optionTarget}">{{ item.stars }}<i class="fa fa-star"></i>
+                    </a>
+                  </li>
+                </ul>
+                <hr>
+              </div>
+              <div v-for="item in activeOptions">
+                <ul class="list-unstyled">
+                  <li v-for="commentItem in item.comments" class="border border-outline-grey rounded mb-2 p-2">
+                    <div class="d-flex comment mb-2">
+                      <img :src=`${commentItem.avator}` alt="" class="rounded-circle mr-1">
+                      <h5 class="align-self-end mr-2">{{commentItem.name}}</h5>
+                      <span class="align-self-center text-warning">{{ item.stars }}<i class="fa fa-star"></i></span>			
+                    </div>
+                    <p>
+                      {{ commentItem.comment }}
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+						    
+						<div v-else>
+              尚未有評語
+            </div>	
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="all.js"></script>
+</body>
+
+</html>
