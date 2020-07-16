@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <title>Login</title>
+  <style>
+    *{
+      font-family:'微軟正黑體',serif;
+    }
+    .login{
+        background-image: url(https://images.unsplash.com/photo-1489769002049-ccd828976a6c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1828&q=80);
+        background-size: cover;
+        height: 100vh;
+        width: 100%;
+        background-position: center center;
+    }
+    .box-shadow{
+        box-shadow:5px 5px 4px rgb(185, 185, 185);
+    }
+    .sign{
+        background-color: white;
+    }
+    .sign p{
+        position: relative;
+    }
+    .sign p::before{
+        content: '';
+        position: absolute;
+        /* width: 50px; */
+        height:2px;
+        background-color: rgba(201, 201, 201, 0.801);
+        left: 0;
+        right: 0;
+        top: 50px;
+    }
+    .sign input{
+        border:none;
+        background-color: transparent;
+        border-bottom: 1.5px solid #3A6701;
+        color:#3A6701
+    }
+    .sign input:focus,.sign button{
+        outline: none;
+    }
+    .bg{
+        background-image: url(https://images.unsplash.com/photo-1461418126083-a84e9ca935de?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1001&q=80);
+        background-size: cover;
+        background-position: center right;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="login d-flex justify-content-center align-items-center">
+      <div class="container">
+        <div class="row box-shadow">
+          <div class="d-flex flex-column p-5 col-md-6 col-12 sign">
+            <p class="h2 text-center mb-5">登入</p>
+            <input type="text" placeholder="請輸入帳號" class="mb-4 pb-2" v-model="user.email">
+            <input type="password" placeholder="請輸入密碼" class="mb-4 pb-2" v-model="user.password">
+            <button type="button" class="btn btn-outline-secondary" @click="signIn">確認登入</button>
+          </div>
+          <div class="col-md-6 d-md-block d-none bg">
+            <p class="text-light" style="position: absolute; bottom: 0;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias nisi harum omnis repudiandae autem, odit commodi doloribus eos?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data(){
+        return{
+          user:{
+            email:'',
+            password:'',
+          }
+        }
+      },
+      methods: {
+        signIn(){
+          const api = `https://course-ec-api.hexschool.io/api/auth/login`;
+          axios.post(api,this.user)
+            .then((res)=>{
+              console.log(res);
+              const token=res.data.token;
+              const expired=res.data.expired;
+              // 寫入 cookie token
+              // expires 設置有效時間
+              document.cookie =`token=${token};expires=${new Date(expired * 1000)}; path=/`;
+              window.location = 'Products.html';
+            }).catch((error)=>{
+              console.log(error);
+            })
+        }
+      },
+    })
+  </script>
+</body>
+</html>
