@@ -186,7 +186,7 @@
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li class="page-item" v-for="item in page.total_pages" :class="{'active':page.current_page===item}">
+          <li class="page-item" v-for="item in page.total_pages" :class="{'active':page.current_page===item}" :key="item">
             <a class="page-link" href="#" @click.prevent="getPage(item)">{{item}}</a>
           </li>
           <li class="page-item" :class="{'disabled':page.current_page===page.total_pages}">
@@ -236,8 +236,7 @@
         },
       },
       data() {
-        return{
-        };
+        return{};
       },
       methods:{
         updateProduct(){
@@ -363,8 +362,6 @@
       methods: {
         getProducts(page=1){
           const vm=this
-         //預設帶入 token
-         axios.defaults.headers.common.Authorization = `Bearer ${this.user.token}`;
           axios.get(`${vm.user.path}/api/${vm.user.uuid}/admin/ec/products?page=${page}`)
           .then(res=>{
             if(res.data.success);
@@ -386,8 +383,13 @@
               $('#productModal').modal('show');
               break;
             case 'edit':
-              vm.tempProduct=Object.assign({},item);
-              $('#productModal').modal('show');
+              // vm.tempProduct=Object.assign({},item);
+              const api=`${vm.user.path}/api/${vm.user.uuid}/admin/ec/product/${item.id}`;
+              axios.get(api)
+                .then(res=>{
+                  vm.tempProduct=res.data.data;
+                  $('#productModal').modal('show');
+                })
               // 使用 refs 觸發子元件方法
               // vm.$refs.productModel.getProduct(vm.tempProduct.id);
               vm.isNew = false;
@@ -402,6 +404,8 @@
         // 取得 token 的 cookies
         // 詳情請見：https://developer.mozilla.org/zh-CN/docs/Web/API/Document/cookie
         this.user.token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        //預設帶入 token
+        axios.defaults.headers.common.Authorization = `Bearer ${this.user.token}`;
         // 若無法取得 token 則返回 Login 頁面
         if (this.user.token === '') {
           window.location = 'Login.html';
