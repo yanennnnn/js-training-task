@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
+  <title>Document</title>
+</head>
+<style lang="scss">
+  *{
+    font-family:'微軟正黑體',serif;
+  }
+  .bg-cover{
+    background-position: center center;
+    background-size: cover;
+    margin: 0;
+    height: 200px;
+    /* width: 300px; */
+  }
+  .products-list{
+    margin:10px;
+    /* width: 33.333%; */
+    box-shadow:2px 2px 4px rgb(185, 185, 185);
+  }
+  .products-list .price{
+    font-size: 20px;
+    color: red;
+    align-self: center;
+  }
+  .products-list .originPrice{
+    font-style: oblique;
+    text-decoration: line-through;
+    align-self: center;
+    margin-left: 5px;
+  }
+  .cart{
+    overflow-y: auto;
+    max-height: 450px;
+  }
+  .list-group-item.active{
+    background-color: gray;
+    border-color:gray;
+  }
+  .page-item.active .page-link{
+    background-color: rgb(65, 64, 64);
+    border-color:rgb(65, 64, 64);
+  }
+  .page-item.active .page-link:focus{
+    box-shadow: 0 0 0 0.2rem rgba(191, 193, 194, 0.25);
+  }
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(196, 195, 195); 
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(151, 151, 151); 
+}
+</style>
+<body>
+  <div id="app">
+    <loading :active.sync="isLoading"></loading>
+    <navbar></navbar>
+    <div calss="container-fluid">
+      <div class="row m-0 px-5 justify-content-center">
+        <div class="col-md-3 col-7 fixed-md-top" style="margin-top: 70px;">
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" :class="{active:category==''}" @click.prevent="targetcategory('')">
+              全部
+            </a>
+            <a href="#" class="list-group-item list-group-item-action" :class="{active:category=='碗盤'}" @click.prevent="targetcategory('碗盤')">碗盤</a>
+            <a href="#" class="list-group-item list-group-item-action" :class="{active:category=='杯子'}" @click.prevent="targetcategory('杯子')">杯子</a>
+            <a href="#" class="list-group-item list-group-item-action" :class="{active:category=='餐具'}" @click.prevent="targetcategory('餐具')">餐具</a>
+          </div>
+          <div class="cart mt-3 border border-secondary border-top-0 ">
+            <h3 class="h3 bg-dark text-light py-2 text-center">加入購物車</h3>
+            <div v-if="carts.length">
+              <div class="px-2 d-flex py-2 border-bottom" v-for="item in carts" :key="item.id">
+                <a href="#" class="text-decoration-none text-danger align-self-center mx-2"
+                  @click.prevent="delCart(item.product.id)">
+                  <i class="fa fa-trash fa-2x"></i>
+                </a>
+                <div class="ml-3 m-auto text-center">
+                  <span class="h6">{{item.product.title}}</span>
+                  <div class="d-flex mt-3 justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary rounded-0 btn-sm"
+                      :disabled="item.quantity===1" @click="updateQty(item.product.id, item.quantity - 1)">-</button>
+                    <input type="text" disabled v-model="item.quantity" class="text-center" style="width: 90px;">
+                    <button type="button" class="btn btn-outline-secondary rounded-0 btn-sm"
+                      @click="updateQty(item.product.id, item.quantity + 1)">+</button>
+                  </div>
+                </div>
+              </div>
+              <a href="#" class="btn btn-secondary m-2 d-block" @click.prevent="goCart">前往結帳</a>
+            </div>
+            <div class="my-5 text-center" v-else>尚未有商品在購物車</div>
+          </div>
+        </div>
+        <div class="col-md-9 ml-auto mt-5 col-12">
+          <div class="row">
+            <div class="col-xl-4 p-0 mb-4 col-md-6 col-12 " v-for="item in products" :key="item.id">
+              <div class="card products-list rounded-0 h-auto">
+                <div class="bg-cover" :style="{backgroundImage: `url(${item.imageUrl[0]})`}"></div>
+                <div class="card-body">
+                  <div class="card-title d-flex">
+                    <h3>{{item.title}}</h3>
+                    <span class="text-muted ml-auto mr-2 align-self-center" 
+                      style="font-size: 16px">{{item.category}}</span>
+                  </div>
+                  <p>{{item.content}}</p>
+                  <div class="btn-type d-flex mt-2 align-self-end">
+                    <span class="price">{{item.price}}</span><span class="originPrice text-muted">{{item.origin_price}}</span>
+                    <!-- <a href="#" class="btn btn-outline-primary" @click.prevent="goTargetProduct(item.id)">查看更多</a> -->
+                    <a href="#" class="text-decoration-none ml-auto text-secondary mr-2" @click.prevent="addCart(item)">
+                      <i class="fa fa-shopping-cart fa-2x" aria-hidden="true"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pagination :page="pagination" @emit-page="getProducts"></pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/3.3.0/vee-validate.full.min.js"></script>
+  <script src="./all.js" type="module"></script>
+</body>
+</html>
