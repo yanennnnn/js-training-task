@@ -1,6 +1,7 @@
 import pagination from './pagination.js';
 import navbar from './nav.js';
 import currencyFilter from './currency.js'
+import singleProduct from './singleProduct.js'
 // 匯入語系檔案
 import zh_TW from './zh_TW.js';
 
@@ -9,6 +10,7 @@ Vue.use(VueLoading);
 Vue.component('loading', VueLoading);
 Vue.component('pagination',pagination);
 Vue.component('navbar',navbar);
+Vue.component('singleProduct',singleProduct);
 Vue.filter('currency',currencyFilter);
 // 註冊全域的表單驗證元件
 Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
@@ -28,6 +30,10 @@ new Vue({
   data(){
     return{
       products:[],
+      tempProduct:{
+        imageUrl: [],
+        num:0,
+      },
       carts:[],
       totalPrice:0,
       pagination:{},
@@ -76,11 +82,16 @@ new Vue({
       axios.get(`${vm.user.path}/api/${vm.user.uuid}/ec/shopping`)
         .then((res)=>{
           vm.carts=res.data.data;
-          vm.carts.forEach((item)=>{
-            vm.totalPrice+=item.product.price*item.quantity
-          })
           vm.isLoading=false;
+          vm.getTotalPrice();
         })
+    },
+    getTotalPrice(){
+      const vm=this;
+      vm.totalPrice=0;
+      vm.carts.forEach((item)=>{
+        vm.totalPrice+=item.product.price*item.quantity
+      })
     },
     addCart(item,quantity=1){
       const vm=this;
@@ -168,12 +179,19 @@ new Vue({
     goProducts(){
       window.location = 'FrontProducts.html';
     },
+    openModal(id) {
+      const vm=this;
+      vm.isLoading=true;
+      axios.get(`${vm.user.path}/api/${vm.user.uuid}/ec/product/${id}`)
+      .then((res)=>{
+        console.log(res);
+        vm.tempProduct=res.data.data;
+        vm.$set(vm.tempProduct, "num", 1);
+        $('#productModal').modal('show');
+        vm.isLoading=false;
+      })
+    }
   },
-  // computed: {
-  //   activeProducts(){
-      
-  //   }	
-  // },
   created() {
     this.getProducts();
     this.getCart();
